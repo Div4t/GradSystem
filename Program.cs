@@ -1,5 +1,6 @@
 using GradSystem.Data;
 using GradSystem.Services;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,11 +38,13 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 // ── Sesión / Cookie ────────────────────────────────────────────────────────
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath        = "/Admin/Login";
-    options.LogoutPath       = "/Admin/Logout";
-    options.ExpireTimeSpan   = TimeSpan.FromHours(8);
+    options.LoginPath         = "/Admin/Login";
+    options.LogoutPath        = "/Admin/Logout";
+    options.ExpireTimeSpan    = TimeSpan.FromHours(8);
     options.SlidingExpiration = true;
-    options.AccessDeniedPath = "/Admin/Login";
+    options.AccessDeniedPath  = "/Admin/Login";
+    // En Railway el proxy termina TLS; la cookie debe aceptarse en HTTP interno
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 });
 
 // ── MVC ────────────────────────────────────────────────────────────────────
@@ -70,6 +73,14 @@ using (var scope = app.Services.CreateScope())
 }
 
 // ── Pipeline ───────────────────────────────────────────────────────────────
+
+// Railway (y cualquier proxy inverso) envía X-Forwarded-For / X-Forwarded-Proto.
+// Sin esto, la app cree que todo es HTTP y las cookies Secure no funcionan.
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
