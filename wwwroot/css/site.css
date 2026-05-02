@@ -8,14 +8,24 @@ html {
   }
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+/* Sticky footer con flexbox */
+html, body {
+  height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+body > .container {
+  flex: 1 0 auto;
+}
+
+footer {
+  flex-shrink: 0;
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus,

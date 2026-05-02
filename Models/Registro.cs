@@ -74,7 +74,7 @@ public class Registro
     public string NombreEspalda { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(20)]
+    [MaxLength(2)]
     [Display(Name = "Número en la Espalda")]
     public string NumeroEspalda { get; set; } = string.Empty;
 

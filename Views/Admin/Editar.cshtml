@@ -107,7 +107,8 @@
                 </div>
                 <div class="col-md-4">
                     <label asp-for="NumeroEspalda" class="form-label fw-semibold"></label>
-                    <input asp-for="NumeroEspalda" class="form-control" />
+                    <input asp-for="NumeroEspalda" class="form-control"
+                           maxlength="2" inputmode="numeric" pattern="[0-9]{1,2}" />
                     <span asp-validation-for="NumeroEspalda" class="text-danger small"></span>
                 </div>
                 <div class="col-md-3">
