@@ -8,25 +8,11 @@ html {
   }
 }
 
-/* Sticky footer con flexbox */
-html, body {
-  height: 100%;
-}
-
 body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-body > .container {
-  flex: 1 0 auto;
-}
 
-footer {
-  flex-shrink: 0;
-}
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus,
 .form-control:focus, .form-check-input:focus {
@@ -179,11 +165,7 @@ footer {
   color: #555 !important;
 }
 
-/* Footer */
-[data-theme="dark"] footer {
-  background-color: #121212 !important;
-  border-color: #3a3a3a !important;
-}
+
 
 /* Fondo de código y monospace */
 [data-theme="dark"] .bg-light {

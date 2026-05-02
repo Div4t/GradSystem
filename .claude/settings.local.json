@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\David\\\\Proyectos\\\\GradSystem\" -Force)",
+      "Bash(Select-Object Name, PSIsContainer)",
+      "Bash(Format-Table -AutoSize)",
+      "Bash(dotnet ef *)",
+      "Bash(dotnet build *)",
+      "Bash(taskkill /PID 11308 /F)",
+      "PowerShell(Stop-Process -Id 11308 -Force -ErrorAction SilentlyContinue)"
+    ]
+  }
+}

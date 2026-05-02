@@ -12,12 +12,13 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
     }
 
-    public DbSet<Registro>              Registros      => Set<Registro>();
-    public DbSet<ColorJersey>           ColoresJersey  => Set<ColorJersey>();
-    public DbSet<UniversidadCatalogo>   Universidades  => Set<UniversidadCatalogo>();
-    public DbSet<TallaCatalogo>         Tallas         => Set<TallaCatalogo>();
-    public DbSet<DedicatoriaCatalogo>   Dedicatorias   => Set<DedicatoriaCatalogo>();
-    public DbSet<TituloCatalogo>        Titulos        => Set<TituloCatalogo>();
+    public DbSet<Registro>              Registros             => Set<Registro>();
+    public DbSet<ColorJersey>           ColoresJersey         => Set<ColorJersey>();
+    public DbSet<UniversidadCatalogo>   Universidades         => Set<UniversidadCatalogo>();
+    public DbSet<TallaCatalogo>         Tallas                => Set<TallaCatalogo>();
+    public DbSet<DedicatoriaCatalogo>   Dedicatorias          => Set<DedicatoriaCatalogo>();
+    public DbSet<TituloCatalogo>        Titulos               => Set<TituloCatalogo>();
+    public DbSet<ConfiguracionSistema>  ConfiguracionSistema  => Set<ConfiguracionSistema>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -66,6 +67,10 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             new DedicatoriaCatalogo { Id = 4, Nombre = "A mi esposo",    Activo = true, Orden = 4 },
             new DedicatoriaCatalogo { Id = 5, Nombre = "A mis hijos",    Activo = true, Orden = 5 },
             new DedicatoriaCatalogo { Id = 6, Nombre = "A mi familia",   Activo = true, Orden = 6 }
+        );
+
+        builder.Entity<ConfiguracionSistema>().HasData(
+            new ConfiguracionSistema { Id = 1, RegistroHabilitado = true }
         );
     }
 }

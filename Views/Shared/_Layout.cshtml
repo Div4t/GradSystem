@@ -10,7 +10,7 @@
     @* Tema carga primero para evitar flash al pintar *@
     <script src="~/js/tema.js" asp-append-version="true"></script>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
     <header>
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark border-bottom mb-4">
             <div class="container">
@@ -74,17 +74,13 @@
         </nav>
     </header>
 
-    <div class="container">
-        <main role="main" class="pb-4">
+    <div class="container flex-grow-1">
+        <main role="main" class="py-4">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted mt-4 py-3">
-        <div class="container text-center">
-            &copy; @DateTime.Now.Year GradSystem
-        </div>
-    </footer>
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

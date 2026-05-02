@@ -125,6 +125,8 @@ public class AdminController : Controller
             .Take(TamanioPagina)
             .ToListAsync();
 
+        var config = await _db.ConfiguracionSistema.FindAsync(1);
+
         var vm = new AdminListaViewModel
         {
             Registros            = registros,
@@ -136,6 +138,7 @@ public class AdminController : Controller
             FiltroColor          = filtroColor,
             FiltroTalla          = filtroTalla,
             FiltroUniversidad    = filtroUniversidad,
+            RegistroHabilitado   = config?.RegistroHabilitado ?? true,
             ColoresDisponibles   = await _db.ColoresJersey
                                        .Where(c => c.Activo)
                                        .OrderBy(c => c.Orden)
@@ -215,6 +218,30 @@ public class AdminController : Controller
 
         TempData["Mensaje"] = $"Registro {registro.Folio} actualizado correctamente.";
         return RedirectToAction(nameof(Detalle), new { id });
+    }
+
+    [Authorize]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ToggleRegistro()
+    {
+        var config = await _db.ConfiguracionSistema.FindAsync(1);
+        if (config is null)
+        {
+            config = new Models.ConfiguracionSistema { Id = 1, RegistroHabilitado = false };
+            _db.ConfiguracionSistema.Add(config);
+        }
+        else
+        {
+            config.RegistroHabilitado = !config.RegistroHabilitado;
+        }
+        await _db.SaveChangesAsync();
+
+        TempData["Mensaje"] = config.RegistroHabilitado
+            ? "El registro ha sido habilitado correctamente."
+            : "El registro ha sido deshabilitado correctamente.";
+
+        return RedirectToAction(nameof(Index));
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────

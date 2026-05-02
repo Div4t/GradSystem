@@ -8,7 +8,24 @@
         <h4 class="mb-0 fw-bold">Panel de Administración</h4>
         <small class="text-muted">@Model.TotalRegistros registro(s) encontrado(s)</small>
     </div>
-    <div class="d-flex gap-2">
+    <div class="d-flex gap-2 align-items-center flex-wrap">
+    <form asp-action="ToggleRegistro" method="post" class="d-inline">
+        @Html.AntiForgeryToken()
+        @if (Model.RegistroHabilitado)
+        {
+            <button type="submit" class="btn btn-danger"
+                    onclick="return confirm('¿Deseas deshabilitar el registro público?')">
+                🔒 Deshabilitar Registro
+            </button>
+        }
+        else
+        {
+            <button type="submit" class="btn btn-success"
+                    onclick="return confirm('¿Deseas habilitar el registro público?')">
+                🔓 Habilitar Registro
+            </button>
+        }
+    </form>
     <a asp-controller="Configuracion" asp-action="Index"
        class="btn btn-outline-secondary">
         ⚙️ Configurar Formulario

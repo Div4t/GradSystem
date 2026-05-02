@@ -26,6 +26,8 @@ public class AdminListaViewModel
     public static readonly List<string> TallasDisponibles =
         new() { "XS", "S", "M", "L", "XL", "XXL" };
 
+    public bool RegistroHabilitado { get; set; } = true;
+
     public bool HayPaginaAnterior => PaginaActual > 1;
     public bool HayPaginaSiguiente => PaginaActual < TotalPaginas;
 }

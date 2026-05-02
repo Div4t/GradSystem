@@ -24,6 +24,13 @@ public class RegistroController : Controller
     [HttpGet]
     public async Task<IActionResult> Formulario()
     {
+        var config = await _db.ConfiguracionSistema.FindAsync(1);
+        if (config?.RegistroHabilitado == false)
+        {
+            ViewBag.RegistroDeshabilitado = true;
+            return View(new RegistroFormViewModel());
+        }
+
         return View(await ConstruirViewModelAsync());
     }
 
@@ -31,6 +38,13 @@ public class RegistroController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Formulario(RegistroFormViewModel vm)
     {
+        var config = await _db.ConfiguracionSistema.FindAsync(1);
+        if (config?.RegistroHabilitado == false)
+        {
+            ViewBag.RegistroDeshabilitado = true;
+            return View(new RegistroFormViewModel());
+        }
+
         // Validación dedicatorias: mínimo 1, máximo 3
         if (vm.DedicatoriasSeleccionadas == null || vm.DedicatoriasSeleccionadas.Count == 0)
             ModelState.AddModelError("DedicatoriasSeleccionadas", "Selecciona al menos una dedicatoria.");
