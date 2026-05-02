@@ -1,0 +1,191 @@
+@model GradSystem.Models.ViewModels.AdminListaViewModel
+@{
+    ViewData["Title"] = "Panel de Administración";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-0 fw-bold">Panel de Administración</h4>
+        <small class="text-muted">@Model.TotalRegistros registro(s) encontrado(s)</small>
+    </div>
+    <div class="d-flex gap-2">
+    <a asp-controller="Configuracion" asp-action="Index"
+       class="btn btn-outline-secondary">
+        ⚙️ Configurar Formulario
+    </a>
+    <a asp-controller="Exportar" asp-action="Excel"
+       asp-route-busqueda="@Model.Busqueda"
+       asp-route-filtroColor="@Model.FiltroColor"
+       asp-route-filtroTalla="@Model.FiltroTalla"
+       asp-route-filtroUniversidad="@Model.FiltroUniversidad"
+       class="btn btn-success">
+        📥 Exportar Excel
+    </a>
+    </div>
+</div>
+
+@* Barra de búsqueda y filtros *@
+<div class="card mb-4">
+    <div class="card-body p-3">
+        <form method="get" asp-action="Index" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label small fw-semibold mb-1">Buscar</label>
+                <input type="text" name="busqueda" value="@Model.Busqueda"
+                       class="form-control form-control-sm"
+                       placeholder="Folio, nombre, universidad, carrera..." />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-semibold mb-1">Color</label>
+                <select name="filtroColor" class="form-select form-select-sm">
+                    <option value="">Todos</option>
+                    @foreach (var color in Model.ColoresDisponibles)
+                    {
+                        <option value="@color" selected="@(Model.FiltroColor == color)">@color</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-semibold mb-1">Talla</label>
+                <select name="filtroTalla" class="form-select form-select-sm">
+                    <option value="">Todas</option>
+                    @foreach (var talla in GradSystem.Models.ViewModels.AdminListaViewModel.TallasDisponibles)
+                    {
+                        <option value="@talla" selected="@(Model.FiltroTalla == talla)">@talla</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-semibold mb-1">Universidad</label>
+                <select name="filtroUniversidad" class="form-select form-select-sm">
+                    <option value="">Todas</option>
+                    @foreach (var uni in Model.UniversidadesDisponibles)
+                    {
+                        <option value="@uni" selected="@(Model.FiltroUniversidad == uni)">@uni</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-dark btn-sm flex-fill">Buscar</button>
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm flex-fill">Limpiar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (TempData["Mensaje"] is not null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        ✅ @TempData["Mensaje"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@* Tabla *@
+<div class="card">
+    <div class="card-body p-0">
+        @if (!Model.Registros.Any())
+        {
+            <div class="text-center py-5 text-muted">
+                <div style="font-size: 3rem;">📭</div>
+                <p class="mt-2">No se encontraron registros.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0 align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Folio</th>
+                            <th>Nombre</th>
+                            <th>Universidad</th>
+                            <th>Carrera</th>
+                            <th class="text-center">Color</th>
+                            <th class="text-center">Talla</th>
+                            <th>Fecha Envío</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in Model.Registros)
+                        {
+                            <tr>
+                                <td class="font-monospace fw-semibold small">@r.Folio</td>
+                                <td>@r.NombreCompleto</td>
+                                <td>@r.Universidad</td>
+                                <td>@r.Carrera</td>
+                                <td class="text-center">
+                                    <span class="badge bg-secondary">@r.ColorJersey</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-dark">@r.Talla</span>
+                                </td>
+                                <td class="small text-muted">
+                                    @r.FechaEnvio.ToLocalTime().ToString("dd/MM/yy HH:mm")
+                                    @if (r.UltimaEdicion.HasValue)
+                                    {
+                                        <br /><span class="text-warning small">✏️ editado</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <a asp-action="Detalle" asp-route-id="@r.Id"
+                                       class="btn btn-outline-secondary btn-sm" title="Ver detalle">👁</a>
+                                    <a asp-action="Editar" asp-route-id="@r.Id"
+                                       class="btn btn-outline-warning btn-sm" title="Editar">✏️</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@* Paginación *@
+@if (Model.TotalPaginas > 1)
+{
+    <nav class="mt-4" aria-label="Paginación">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(!Model.HayPaginaAnterior ? "disabled" : "")">
+                <a class="page-link" asp-action="Index"
+                   asp-route-pagina="@(Model.PaginaActual - 1)"
+                   asp-route-busqueda="@Model.Busqueda"
+                   asp-route-filtroColor="@Model.FiltroColor"
+                   asp-route-filtroTalla="@Model.FiltroTalla"
+                   asp-route-filtroUniversidad="@Model.FiltroUniversidad">
+                    ←
+                </a>
+            </li>
+
+            @for (int i = Math.Max(1, Model.PaginaActual - 2);
+                      i <= Math.Min(Model.TotalPaginas, Model.PaginaActual + 2); i++)
+            {
+                <li class="page-item @(i == Model.PaginaActual ? "active" : "")">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-pagina="@i"
+                       asp-route-busqueda="@Model.Busqueda"
+                       asp-route-filtroColor="@Model.FiltroColor"
+                       asp-route-filtroTalla="@Model.FiltroTalla"
+                       asp-route-filtroUniversidad="@Model.FiltroUniversidad">
+                        @i
+                    </a>
+                </li>
+            }
+
+            <li class="page-item @(!Model.HayPaginaSiguiente ? "disabled" : "")">
+                <a class="page-link" asp-action="Index"
+                   asp-route-pagina="@(Model.PaginaActual + 1)"
+                   asp-route-busqueda="@Model.Busqueda"
+                   asp-route-filtroColor="@Model.FiltroColor"
+                   asp-route-filtroTalla="@Model.FiltroTalla"
+                   asp-route-filtroUniversidad="@Model.FiltroUniversidad">
+                    →
+                </a>
+            </li>
+        </ul>
+        <p class="text-center text-muted small">
+            Página @Model.PaginaActual de @Model.TotalPaginas
+        </p>
+    </nav>
+}

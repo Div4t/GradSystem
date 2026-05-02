@@ -1,0 +1,169 @@
+@model GradSystem.Models.ViewModels.RegistroFormViewModel
+@{
+    ViewData["Title"] = "Registro de Graduación";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0">🎓 Registro de Paquete de Graduación</h4>
+            </div>
+            <div class="card-body p-4">
+
+                <form asp-action="Formulario" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    @* Datos personales *@
+                    <h6 class="text-uppercase text-muted fw-bold mb-3 border-bottom pb-2">Datos Personales</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label asp-for="Nombres" class="form-label fw-semibold"></label>
+                            <input asp-for="Nombres" class="form-control" placeholder="Ej. Juan Carlos" />
+                            <span asp-validation-for="Nombres" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="ApellidoPaterno" class="form-label fw-semibold"></label>
+                            <input asp-for="ApellidoPaterno" class="form-control" />
+                            <span asp-validation-for="ApellidoPaterno" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="ApellidoMaterno" class="form-label fw-semibold"></label>
+                            <input asp-for="ApellidoMaterno" class="form-control" />
+                            <span asp-validation-for="ApellidoMaterno" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Universidad" class="form-label fw-semibold"></label>
+                            <select asp-for="Universidad"
+                                    asp-items="Model.UniversidadesDisponibles"
+                                    class="form-select">
+                                <option value="">-- Selecciona tu universidad --</option>
+                            </select>
+                            <span asp-validation-for="Universidad" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Carrera" class="form-label fw-semibold"></label>
+                            <input asp-for="Carrera" class="form-control" placeholder="Ej. Ingeniería en Sistemas" />
+                            <span asp-validation-for="Carrera" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="NumeroFotografia" class="form-label fw-semibold"></label>
+                            <input asp-for="NumeroFotografia" class="form-control" placeholder="Ej. F-001" />
+                            <span asp-validation-for="NumeroFotografia" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    @* Dedicatorias *@
+                    <h6 class="text-uppercase text-muted fw-bold mb-3 border-bottom pb-2">
+                        Dedicatorias
+                        <small class="text-muted fw-normal text-lowercase">(selecciona entre 1 y 3)</small>
+                    </h6>
+                    <div class="mb-4">
+                        <div class="row g-2" id="dedicatorias-container">
+                            @foreach (var d in Model.DedicatoriasDisponibles)
+                            {
+                                <div class="col-sm-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input ded-check" type="checkbox"
+                                               name="DedicatoriasSeleccionadas" value="@d.Value"
+                                               id="ded-@d.Value.GetHashCode()"
+                                               @(Model.DedicatoriasSeleccionadas.Contains(d.Value) ? "checked" : "") />
+                                        <label class="form-check-label" for="ded-@d.Value.GetHashCode()">
+                                            @d.Text
+                                        </label>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="mt-2">
+                            <span id="ded-contador" class="text-muted small">0 / 3 seleccionadas</span>
+                            <span asp-validation-for="DedicatoriasSeleccionadas" class="text-danger small ms-2"></span>
+                            @if (ViewData.ModelState["DedicatoriasSeleccionadas"]?.Errors.Count > 0)
+                            {
+                                <span class="text-danger small ms-2">
+                                    @ViewData.ModelState["DedicatoriasSeleccionadas"]!.Errors[0].ErrorMessage
+                                </span>
+                            }
+                        </div>
+                    </div>
+
+                    @* Jersey *@
+                    <h6 class="text-uppercase text-muted fw-bold mb-3 border-bottom pb-2">Datos del Jersey</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label asp-for="ColorJersey" class="form-label fw-semibold"></label>
+                            <select asp-for="ColorJersey" asp-items="Model.ColoresDisponibles"
+                                    class="form-select">
+                                <option value="">-- Selecciona un color --</option>
+                            </select>
+                            <span asp-validation-for="ColorJersey" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Talla" class="form-label fw-semibold"></label>
+                            <select asp-for="Talla" asp-items="Model.TallasDisponibles"
+                                    class="form-select">
+                                <option value="">-- Selecciona talla --</option>
+                            </select>
+                            <span asp-validation-for="Talla" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="NumeroEspalda" class="form-label fw-semibold"></label>
+                            <input asp-for="NumeroEspalda" class="form-control" placeholder="Ej. 07" />
+                            <span asp-validation-for="NumeroEspalda" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="Titulo" class="form-label fw-semibold"></label>
+                            <select asp-for="Titulo" asp-items="Model.TitulosDisponibles"
+                                    class="form-select">
+                                <option value="">-- Abreviatura --</option>
+                            </select>
+                            <span asp-validation-for="Titulo" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-5">
+                            <label asp-for="NombreEspalda" class="form-label fw-semibold"></label>
+                            <input asp-for="NombreEspalda" class="form-control" placeholder="Nombre que irá en la espalda" />
+                            <span asp-validation-for="NombreEspalda" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-2">
+                        <button type="submit" class="btn btn-dark btn-lg">
+                            Enviar Registro
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const MAX = 3;
+            const checks = document.querySelectorAll('.ded-check');
+            const contador = document.getElementById('ded-contador');
+
+            function actualizar() {
+                const seleccionadas = document.querySelectorAll('.ded-check:checked').length;
+                contador.textContent = seleccionadas + ' / ' + MAX + ' seleccionadas';
+                contador.className = seleccionadas > 0
+                    ? 'text-success small' : 'text-muted small';
+
+                checks.forEach(cb => {
+                    if (!cb.checked && seleccionadas >= MAX)
+                        cb.disabled = true;
+                    else
+                        cb.disabled = false;
+                });
+            }
+
+            checks.forEach(cb => cb.addEventListener('change', actualizar));
+            actualizar();
+        })();
+    </script>
+}

@@ -1,0 +1,60 @@
+@{
+    ViewData["Title"] = "Consultar Folio";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-5">
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white text-center py-4">
+                <div style="font-size: 2.5rem;">🔍</div>
+                <h4 class="mb-0">Consultar mi Pedido</h4>
+            </div>
+            <div class="card-body p-4">
+
+                <p class="text-muted text-center mb-4">
+                    Ingresa el folio que recibiste al registrarte para ver el estado de tu pedido.
+                </p>
+
+                @if (ViewBag.FolioNoEncontrado is not null)
+                {
+                    <div class="alert alert-warning d-flex align-items-center" role="alert">
+                        <span class="me-2">⚠️</span>
+                        No se encontró ningún registro con el folio
+                        <strong class="ms-1">@ViewBag.FolioNoEncontrado</strong>.
+                        Verifica que lo hayas escrito correctamente.
+                    </div>
+                }
+
+                <form asp-action="Consulta" method="post">
+                    <div class="mb-3">
+                        <label for="folio" class="form-label fw-semibold">Número de Folio</label>
+                        <input type="text" id="folio" name="folio"
+                               class="form-control form-control-lg font-monospace text-center"
+                               placeholder="UANL-2026-00001"
+                               value="@ViewBag.FolioNoEncontrado"
+                               style="letter-spacing: 2px;" />
+                        <span class="text-danger small">
+                            @Html.ValidationMessage("folio")
+                        </span>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-dark btn-lg">
+                            Buscar
+                        </button>
+                    </div>
+                </form>
+
+                <hr class="my-4" />
+
+                <div class="text-center">
+                    <small class="text-muted">¿Aún no te registraste?</small><br />
+                    <a asp-action="Formulario" class="btn btn-outline-dark btn-sm mt-2">
+                        Ir al formulario de registro
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

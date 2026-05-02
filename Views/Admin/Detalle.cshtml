@@ -1,0 +1,126 @@
+@model GradSystem.Models.Registro
+@{
+    ViewData["Title"] = $"Detalle — {Model.Folio}";
+}
+
+<div class="d-flex align-items-center mb-4 gap-3">
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">← Volver</a>
+    <h5 class="mb-0 fw-bold">Detalle del Registro</h5>
+    <span class="badge bg-dark font-monospace fs-6">@Model.Folio</span>
+    <a asp-action="Editar" asp-route-id="@Model.Id" class="btn btn-warning btn-sm ms-auto">
+        ✏️ Editar
+    </a>
+</div>
+
+@if (TempData["Mensaje"] is not null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        ✅ @TempData["Mensaje"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+
+        @* Fechas *@
+        <div class="alert alert-light border mb-4">
+            <div class="row g-2">
+                <div class="col-sm-6">
+                    <span class="text-muted small">📅 Fecha de envío</span>
+                    <p class="mb-0 fw-semibold">
+                        @Model.FechaEnvio.ToLocalTime().ToString("dd/MM/yyyy HH:mm") hrs
+                    </p>
+                </div>
+                @if (Model.UltimaEdicion.HasValue)
+                {
+                    <div class="col-sm-6">
+                        <span class="text-muted small">✏️ Última edición</span>
+                        <p class="mb-0 fw-semibold">
+                            @Model.UltimaEdicion.Value.ToLocalTime().ToString("dd/MM/yyyy HH:mm") hrs
+                            @if (!string.IsNullOrEmpty(Model.EditadoPor))
+                            {
+                                <span class="text-muted small">— por @Model.EditadoPor</span>
+                            }
+                        </p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <h6 class="text-uppercase text-muted fw-bold mb-3 border-bottom pb-2">Datos Personales</h6>
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6">
+                <span class="text-muted small">Nombre(s)</span>
+                <p class="mb-0 fw-semibold">@Model.Nombres</p>
+            </div>
+            <div class="col-sm-3">
+                <span class="text-muted small">Apellido Paterno</span>
+                <p class="mb-0 fw-semibold">@Model.ApellidoPaterno</p>
+            </div>
+            <div class="col-sm-3">
+                <span class="text-muted small">Apellido Materno</span>
+                <p class="mb-0 fw-semibold">@Model.ApellidoMaterno</p>
+            </div>
+            <div class="col-sm-6">
+                <span class="text-muted small">Universidad</span>
+                <p class="mb-0 fw-semibold">@Model.Universidad</p>
+            </div>
+            <div class="col-sm-6">
+                <span class="text-muted small">Carrera</span>
+                <p class="mb-0 fw-semibold">@Model.Carrera</p>
+            </div>
+            <div class="col-sm-4">
+                <span class="text-muted small">Número de Fotografía</span>
+                <p class="mb-0 fw-semibold">@Model.NumeroFotografia</p>
+            </div>
+        </div>
+
+        <h6 class="text-uppercase text-muted fw-bold mb-3 border-bottom pb-2">Dedicatorias</h6>
+        <div class="mb-4">
+            <div class="mb-2">
+                <span class="badge bg-secondary me-1">1</span>
+                <span>@Model.Dedicatoria1</span>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Dedicatoria2))
+            {
+                <div class="mb-2">
+                    <span class="badge bg-secondary me-1">2</span>
+                    <span>@Model.Dedicatoria2</span>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Dedicatoria3))
+            {
+                <div class="mb-2">
+                    <span class="badge bg-secondary me-1">3</span>
+                    <span>@Model.Dedicatoria3</span>
+                </div>
+            }
+        </div>
+
+        <h6 class="text-uppercase text-muted fw-bold mb-3 border-bottom pb-2">Datos del Jersey</h6>
+        <div class="row g-3">
+            <div class="col-sm-4">
+                <span class="text-muted small">Color</span>
+                <p class="mb-0 fw-semibold">@Model.ColorJersey</p>
+            </div>
+            <div class="col-sm-4">
+                <span class="text-muted small">Talla</span>
+                <p class="mb-0 fw-semibold">@Model.Talla</p>
+            </div>
+            <div class="col-sm-4">
+                <span class="text-muted small">Número en espalda</span>
+                <p class="mb-0 fw-semibold">@Model.NumeroEspalda</p>
+            </div>
+            <div class="col-sm-3">
+                <span class="text-muted small">Abreviatura</span>
+                <p class="mb-0 fw-semibold">@Model.Titulo</p>
+            </div>
+            <div class="col-sm-5">
+                <span class="text-muted small">Nombre en espalda</span>
+                <p class="mb-0 fw-semibold">@Model.NombreEspalda</p>
+            </div>
+        </div>
+
+    </div>
+</div>

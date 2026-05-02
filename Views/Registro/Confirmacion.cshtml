@@ -1,0 +1,77 @@
+@model GradSystem.Models.Registro
+@{
+    ViewData["Title"] = "Registro Exitoso";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+
+        <div class="card shadow-sm border-success">
+            <div class="card-header bg-success text-white text-center py-4">
+                <div style="font-size: 3rem;">✅</div>
+                <h3 class="mb-1">¡Registro Exitoso!</h3>
+                <p class="mb-0 opacity-75">Tu pedido fue recibido correctamente.</p>
+            </div>
+            <div class="card-body p-4">
+
+                <div class="text-center mb-4">
+                    <p class="text-muted mb-1">Tu número de folio es:</p>
+                    <div class="display-5 fw-bold text-dark font-monospace bg-light rounded px-4 py-3 d-inline-block">
+                        @Model.Folio
+                    </div>
+                    <p class="text-muted small mt-2">
+                        Guarda este folio para consultar el estado de tu pedido.
+                    </p>
+                </div>
+
+                <hr />
+
+                <h6 class="fw-bold text-uppercase text-muted mb-3">Resumen de tu pedido</h6>
+                <div class="row g-2">
+                    <div class="col-sm-6">
+                        <span class="text-muted small">Nombre completo</span>
+                        <p class="mb-1 fw-semibold">@Model.NombreCompleto</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-muted small">Universidad</span>
+                        <p class="mb-1 fw-semibold">@Model.Universidad</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-muted small">Carrera</span>
+                        <p class="mb-1 fw-semibold">@Model.Carrera</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-muted small">Fecha de envío</span>
+                        <p class="mb-1 fw-semibold">
+                            @Model.FechaEnvio.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                        </p>
+                    </div>
+                    <div class="col-sm-4">
+                        <span class="text-muted small">Color de Jersey</span>
+                        <p class="mb-1 fw-semibold">@Model.ColorJersey</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <span class="text-muted small">Talla</span>
+                        <p class="mb-1 fw-semibold">@Model.Talla</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <span class="text-muted small">Número en espalda</span>
+                        <p class="mb-1 fw-semibold">@Model.NumeroEspalda</p>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <a asp-action="Consulta" asp-route-folio="@Model.Folio"
+                       class="btn btn-outline-dark flex-fill">
+                        Consultar mi folio
+                    </a>
+                    <a asp-action="Formulario" class="btn btn-dark flex-fill">
+                        Nuevo registro
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

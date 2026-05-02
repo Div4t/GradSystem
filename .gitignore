@@ -1,0 +1,22 @@
+## .NET
+bin/
+obj/
+*.user
+.vs/
+.vscode/
+
+## Secretos y config local
+appsettings.Development.json
+appsettings.*.json
+!appsettings.json
+*.pfx
+
+## SQLite (no se usa en prod)
+*.db
+*.db-shm
+*.db-wal
+app.db
+
+## OS
+.DS_Store
+Thumbs.db

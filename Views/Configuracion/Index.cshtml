@@ -1,0 +1,483 @@
+@using GradSystem.Models
+@{
+    ViewData["Title"] = "Configuración del Formulario";
+    string tabActiva = ViewBag.Tab ?? "universidades";
+
+    var universidades = (List<UniversidadCatalogo>)ViewBag.Universidades;
+    var colores       = (List<ColorJersey>)ViewBag.Colores;
+    var tallas        = (List<TallaCatalogo>)ViewBag.Tallas;
+    var dedicatorias  = (List<DedicatoriaCatalogo>)ViewBag.Dedicatorias;
+    var titulos       = (List<TituloCatalogo>)ViewBag.Titulos;
+}
+
+<div class="d-flex align-items-center mb-4 gap-3">
+    <a asp-controller="Admin" asp-action="Index" class="btn btn-outline-secondary btn-sm">← Panel Admin</a>
+    <h5 class="mb-0 fw-bold">⚙️ Configuración del Formulario</h5>
+</div>
+
+@if (TempData["Mensaje"] is not null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        ✅ @TempData["Mensaje"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link @(tabActiva == "universidades" ? "active" : "")"
+           asp-action="Index" asp-route-tab="universidades">
+            🏫 Universidades
+            <span class="badge bg-secondary ms-1">@universidades.Count</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(tabActiva == "colores" ? "active" : "")"
+           asp-action="Index" asp-route-tab="colores">
+            🎨 Colores de Jersey
+            <span class="badge bg-secondary ms-1">@colores.Count</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(tabActiva == "tallas" ? "active" : "")"
+           asp-action="Index" asp-route-tab="tallas">
+            📏 Tallas
+            <span class="badge bg-secondary ms-1">@tallas.Count</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(tabActiva == "dedicatorias" ? "active" : "")"
+           asp-action="Index" asp-route-tab="dedicatorias">
+            💬 Dedicatorias
+            <span class="badge bg-secondary ms-1">@dedicatorias.Count</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(tabActiva == "titulos" ? "active" : "")"
+           asp-action="Index" asp-route-tab="titulos">
+            🎓 Abreviaturas
+            <span class="badge bg-secondary ms-1">@titulos.Count</span>
+        </a>
+    </li>
+</ul>
+
+@* ════════════════════════════════ UNIVERSIDADES ═══════════════════════════ *@
+@if (tabActiva == "universidades")
+{
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">Universidades disponibles en el formulario</span>
+            <small class="opacity-75">Los cambios se reflejan inmediatamente</small>
+        </div>
+        <div class="card-body">
+            <form asp-action="AgregarUniversidad" method="post" class="row g-2 mb-4">
+                <div class="col-auto" style="width:120px">
+                    <input type="text" name="siglas" class="form-control"
+                           placeholder="Ej. UDEM" maxlength="20" required />
+                </div>
+                <div class="col">
+                    <input type="text" name="nombre" class="form-control"
+                           placeholder="Ej. UDEM Universidad de Monterrey" required />
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-dark">+ Agregar</button>
+                </div>
+            </form>
+
+            @if (!universidades.Any())
+            {
+                <p class="text-muted text-center py-3">No hay universidades registradas.</p>
+            }
+            else
+            {
+                @* Formularios ocultos de edición (uno por fila) *@
+                @foreach (var u in universidades)
+                {
+                    <form id="edit-uni-@u.Id"
+                          asp-action="EditarUniversidad" asp-route-id="@u.Id"
+                          method="post" class="d-none"></form>
+                    <form id="del-uni-@u.Id"
+                          asp-action="EliminarUniversidad" asp-route-id="@u.Id"
+                          method="post" class="d-none"
+                          onsubmit="return confirm('¿Eliminar esta universidad?')"></form>
+                }
+
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width:70px">Orden</th>
+                                <th style="width:110px">Siglas</th>
+                                <th>Universidad</th>
+                                <th class="text-center" style="width:90px">Activo</th>
+                                <th class="text-center" style="width:160px">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var u in universidades)
+                            {
+                                <tr class="@(!u.Activo ? "opacity-50" : "")">
+                                    <td>
+                                        <input type="number" name="orden" value="@u.Orden"
+                                               form="edit-uni-@u.Id"
+                                               class="form-control form-control-sm" style="width:65px" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="siglas" value="@u.Siglas"
+                                               form="edit-uni-@u.Id"
+                                               class="form-control form-control-sm text-uppercase"
+                                               maxlength="20" required />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="nombre" value="@u.Nombre"
+                                               form="edit-uni-@u.Id"
+                                               class="form-control form-control-sm" required />
+                                    </td>
+                                    <td class="text-center">
+                                        <input class="form-check-input" type="checkbox"
+                                               name="activo" value="true"
+                                               form="edit-uni-@u.Id"
+                                               @(u.Activo ? "checked" : "") />
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="submit" form="edit-uni-@u.Id"
+                                                class="btn btn-warning btn-sm">💾 Guardar</button>
+                                        <button type="submit" form="del-uni-@u.Id"
+                                                class="btn btn-danger btn-sm">🗑</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@* ════════════════════════════════ COLORES ════════════════════════════════ *@
+@if (tabActiva == "colores")
+{
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">Colores de jersey disponibles</span>
+            <small class="opacity-75">Los cambios se reflejan inmediatamente</small>
+        </div>
+        <div class="card-body">
+            <form asp-action="AgregarColor" method="post" class="row g-2 mb-4">
+                <div class="col">
+                    <input type="text" name="nombre" class="form-control"
+                           placeholder="Ej. Morado" required />
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-dark">+ Agregar</button>
+                </div>
+            </form>
+
+            @if (!colores.Any())
+            {
+                <p class="text-muted text-center py-3">No hay colores registrados.</p>
+            }
+            else
+            {
+                @foreach (var c in colores)
+                {
+                    <form id="edit-col-@c.Id"
+                          asp-action="EditarColor" asp-route-id="@c.Id"
+                          method="post" class="d-none"></form>
+                    <form id="del-col-@c.Id"
+                          asp-action="EliminarColor" asp-route-id="@c.Id"
+                          method="post" class="d-none"
+                          onsubmit="return confirm('¿Eliminar este color?')"></form>
+                }
+
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width:70px">Orden</th>
+                                <th>Color</th>
+                                <th class="text-center" style="width:90px">Activo</th>
+                                <th class="text-center" style="width:160px">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in colores)
+                            {
+                                <tr class="@(!c.Activo ? "opacity-50" : "")">
+                                    <td>
+                                        <input type="number" name="orden" value="@c.Orden"
+                                               form="edit-col-@c.Id"
+                                               class="form-control form-control-sm" style="width:65px" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="nombre" value="@c.Nombre"
+                                               form="edit-col-@c.Id"
+                                               class="form-control form-control-sm" required />
+                                    </td>
+                                    <td class="text-center">
+                                        <input class="form-check-input" type="checkbox"
+                                               name="activo" value="true"
+                                               form="edit-col-@c.Id"
+                                               @(c.Activo ? "checked" : "") />
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="submit" form="edit-col-@c.Id"
+                                                class="btn btn-warning btn-sm">💾 Guardar</button>
+                                        <button type="submit" form="del-col-@c.Id"
+                                                class="btn btn-danger btn-sm">🗑</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@* ═══════════════════════════════ DEDICATORIAS ════════════════════════════ *@
+@if (tabActiva == "dedicatorias")
+{
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">Opciones de dedicatoria disponibles</span>
+            <small class="opacity-75">Los cambios se reflejan inmediatamente en el formulario público</small>
+        </div>
+        <div class="card-body">
+            <form asp-action="AgregarDedicatoria" method="post" class="row g-2 mb-4">
+                <div class="col">
+                    <input type="text" name="nombre" class="form-control"
+                           placeholder='Ej. "A mi abuela"' required />
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-dark">+ Agregar</button>
+                </div>
+            </form>
+
+            @if (!dedicatorias.Any())
+            {
+                <p class="text-muted text-center py-3">No hay dedicatorias registradas.</p>
+            }
+            else
+            {
+                @foreach (var d in dedicatorias)
+                {
+                    <form id="edit-ded-@d.Id"
+                          asp-action="EditarDedicatoria" asp-route-id="@d.Id"
+                          method="post" class="d-none"></form>
+                    <form id="del-ded-@d.Id"
+                          asp-action="EliminarDedicatoria" asp-route-id="@d.Id"
+                          method="post" class="d-none"
+                          onsubmit="return confirm('¿Eliminar esta dedicatoria?')"></form>
+                }
+
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width:70px">Orden</th>
+                                <th>Dedicatoria</th>
+                                <th class="text-center" style="width:90px">Activo</th>
+                                <th class="text-center" style="width:160px">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var d in dedicatorias)
+                            {
+                                <tr class="@(!d.Activo ? "opacity-50" : "")">
+                                    <td>
+                                        <input type="number" name="orden" value="@d.Orden"
+                                               form="edit-ded-@d.Id"
+                                               class="form-control form-control-sm" style="width:65px" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="nombre" value="@d.Nombre"
+                                               form="edit-ded-@d.Id"
+                                               class="form-control form-control-sm" required />
+                                    </td>
+                                    <td class="text-center">
+                                        <input class="form-check-input" type="checkbox"
+                                               name="activo" value="true"
+                                               form="edit-ded-@d.Id"
+                                               @(d.Activo ? "checked" : "") />
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="submit" form="edit-ded-@d.Id"
+                                                class="btn btn-warning btn-sm">💾 Guardar</button>
+                                        <button type="submit" form="del-ded-@d.Id"
+                                                class="btn btn-danger btn-sm">🗑</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@* ════════════════════════════════ TÍTULOS ════════════════════════════════ *@
+@if (tabActiva == "titulos")
+{
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">Abreviaturas disponibles en el jersey</span>
+            <small class="opacity-75">Los cambios se reflejan inmediatamente en el formulario público</small>
+        </div>
+        <div class="card-body">
+            <form asp-action="AgregarTitulo" method="post" class="row g-2 mb-4">
+                <div class="col">
+                    <input type="text" name="nombre" class="form-control"
+                           placeholder="Ej. Mtro" required />
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-dark">+ Agregar</button>
+                </div>
+            </form>
+
+            @if (!titulos.Any())
+            {
+                <p class="text-muted text-center py-3">No hay títulos registrados.</p>
+            }
+            else
+            {
+                @foreach (var t in titulos)
+                {
+                    <form id="edit-tit-@t.Id"
+                          asp-action="EditarTitulo" asp-route-id="@t.Id"
+                          method="post" class="d-none"></form>
+                    <form id="del-tit-@t.Id"
+                          asp-action="EliminarTitulo" asp-route-id="@t.Id"
+                          method="post" class="d-none"
+                          onsubmit="return confirm('¿Eliminar este título?')"></form>
+                }
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width:70px">Orden</th>
+                                <th>Título</th>
+                                <th class="text-center" style="width:90px">Activo</th>
+                                <th class="text-center" style="width:160px">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var t in titulos)
+                            {
+                                <tr class="@(!t.Activo ? "opacity-50" : "")">
+                                    <td>
+                                        <input type="number" name="orden" value="@t.Orden"
+                                               form="edit-tit-@t.Id"
+                                               class="form-control form-control-sm" style="width:65px" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="nombre" value="@t.Nombre"
+                                               form="edit-tit-@t.Id"
+                                               class="form-control form-control-sm" required />
+                                    </td>
+                                    <td class="text-center">
+                                        <input class="form-check-input" type="checkbox"
+                                               name="activo" value="true"
+                                               form="edit-tit-@t.Id"
+                                               @(t.Activo ? "checked" : "") />
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="submit" form="edit-tit-@t.Id"
+                                                class="btn btn-warning btn-sm">💾 Guardar</button>
+                                        <button type="submit" form="del-tit-@t.Id"
+                                                class="btn btn-danger btn-sm">🗑</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@* ════════════════════════════════ TALLAS ═════════════════════════════════ *@
+@if (tabActiva == "tallas")
+{
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">Tallas disponibles</span>
+            <small class="opacity-75">Los cambios se reflejan inmediatamente</small>
+        </div>
+        <div class="card-body">
+            <form asp-action="AgregarTalla" method="post" class="row g-2 mb-4">
+                <div class="col">
+                    <input type="text" name="nombre" class="form-control"
+                           placeholder="Ej. 3XL" required />
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-dark">+ Agregar</button>
+                </div>
+            </form>
+
+            @if (!tallas.Any())
+            {
+                <p class="text-muted text-center py-3">No hay tallas registradas.</p>
+            }
+            else
+            {
+                @foreach (var t in tallas)
+                {
+                    <form id="edit-tal-@t.Id"
+                          asp-action="EditarTalla" asp-route-id="@t.Id"
+                          method="post" class="d-none"></form>
+                    <form id="del-tal-@t.Id"
+                          asp-action="EliminarTalla" asp-route-id="@t.Id"
+                          method="post" class="d-none"
+                          onsubmit="return confirm('¿Eliminar esta talla?')"></form>
+                }
+
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width:70px">Orden</th>
+                                <th>Talla</th>
+                                <th class="text-center" style="width:90px">Activo</th>
+                                <th class="text-center" style="width:160px">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var t in tallas)
+                            {
+                                <tr class="@(!t.Activo ? "opacity-50" : "")">
+                                    <td>
+                                        <input type="number" name="orden" value="@t.Orden"
+                                               form="edit-tal-@t.Id"
+                                               class="form-control form-control-sm" style="width:65px" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="nombre" value="@t.Nombre"
+                                               form="edit-tal-@t.Id"
+                                               class="form-control form-control-sm" required />
+                                    </td>
+                                    <td class="text-center">
+                                        <input class="form-check-input" type="checkbox"
+                                               name="activo" value="true"
+                                               form="edit-tal-@t.Id"
+                                               @(t.Activo ? "checked" : "") />
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="submit" form="edit-tal-@t.Id"
+                                                class="btn btn-warning btn-sm">💾 Guardar</button>
+                                        <button type="submit" form="del-tal-@t.Id"
+                                                class="btn btn-danger btn-sm">🗑</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+}
